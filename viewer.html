@@ -31,12 +31,39 @@
             font-size: 0.9rem;
             opacity: 0.8;
         }
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 15px;
+            background: #16213e;
+        }
+        .toggle-btn {
+            padding: 10px 25px;
+            font-size: 1rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .toggle-btn.active {
+            background: #4CAF50;
+            color: white;
+        }
+        .toggle-btn:not(.active) {
+            background: #333;
+            color: #aaa;
+        }
+        .toggle-btn:hover:not(.active) {
+            background: #444;
+        }
         .viewer-container {
             flex: 1;
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            position: relative;
         }
         model-viewer {
             width: 100%;
@@ -58,8 +85,8 @@
         }
         .legend {
             position: absolute;
-            top: 100px;
-            right: 20px;
+            top: 30px;
+            right: 30px;
             background: rgba(255,255,255,0.95);
             padding: 15px;
             border-radius: 8px;
@@ -89,9 +116,15 @@
         <p>Интерактивен преглед</p>
     </header>
 
+    <div class="toggle-container">
+        <button class="toggle-btn active" onclick="switchModel('roof')" id="btn-roof">🏠 С покрив</button>
+        <button class="toggle-btn" onclick="switchModel('no-roof')" id="btn-no-roof">📐 Без покрив</button>
+    </div>
+
     <div class="viewer-container">
         <model-viewer
-            src="parcel.glb"
+            id="viewer"
+            src="parcel-with-roof.glb"
             alt="3D модел на парцел с къща"
             camera-controls
             auto-rotate
@@ -103,25 +136,44 @@
             environment-image="neutral"
         >
         </model-viewer>
-    </div>
 
-    <div class="legend">
-        <h3>ЛЕГЕНДА</h3>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(242, 178, 102);"></div> Кухня + Дневна</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(102, 204, 102);"></div> Стая</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(77, 153, 230);"></div> Баня</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(178, 128, 204);"></div> Тоалетна</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(255, 230, 77);"></div> Коридор</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(242, 153, 153);"></div> Спалня 1</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(230, 102, 102);"></div> Спалня 2</div>
-        <div class="legend-item"><div class="legend-color" style="background: rgb(178, 166, 153);"></div> Лятна кухня</div>
+        <div class="legend">
+            <h3>ЛЕГЕНДА</h3>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(242, 178, 102);"></div> Кухня + Дневна</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(102, 204, 102);"></div> Стая</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(77, 153, 230);"></div> Баня</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(178, 128, 204);"></div> Тоалетна</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(255, 230, 77);"></div> Коридор</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(242, 153, 153);"></div> Спалня 1</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(230, 102, 102);"></div> Спалня 2</div>
+            <div class="legend-item"><div class="legend-color" style="background: rgb(178, 166, 153);"></div> Лятна кухня</div>
+        </div>
     </div>
 
     <div class="controls">
         <p>🖱️ Завъртане: ляв бутон + влачене | 📏 Мащаб: скролване | 🔄 Преместване: десен бутон + влачене</p>
     </div>
 
-    <!-- Google's model-viewer library -->
     <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+    
+    <script>
+        function switchModel(type) {
+            const viewer = document.getElementById('viewer');
+            const btnRoof = document.getElementById('btn-roof');
+            const btnNoRoof = document.getElementById('btn-no-roof');
+            
+            if (type === 'roof') {
+                viewer.src = 'parcel-with-roof.glb';
+                viewer.cameraOrbit = '45deg 60deg 80m';
+                btnRoof.classList.add('active');
+                btnNoRoof.classList.remove('active');
+            } else {
+                viewer.src = 'parcel-no-roof.glb';
+                viewer.cameraOrbit = '0deg 0deg 60m';
+                btnNoRoof.classList.add('active');
+                btnRoof.classList.remove('active');
+            }
+        }
+    </script>
 </body>
 </html>
