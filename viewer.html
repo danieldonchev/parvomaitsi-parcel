@@ -4,259 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>3D Парцел - Преглед</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: Arial, sans-serif;
-            background: #1a1a2e;
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-        }
-        header {
-            background: #16213e;
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-        }
-        header h1 {
-            font-size: 1.5rem;
-            margin-bottom: 5px;
-        }
-        header p {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-        .toggle-container {
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-            padding: 15px;
-            background: #16213e;
-        }
-        .toggle-btn {
-            padding: 10px 25px;
-            font-size: 1rem;
-            border: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .toggle-btn.active {
-            background: #4CAF50;
-            color: white;
-        }
-        .toggle-btn:not(.active) {
-            background: #333;
-            color: #aaa;
-        }
-        .toggle-btn:hover:not(.active) {
-            background: #444;
-        }
-        .viewer-container {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            position: relative;
-        }
-        model-viewer {
-            width: 100%;
-            max-width: 1200px;
-            height: 70vh;
-            background-color: #2a2a4a;
-            border-radius: 12px;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
-        }
-        .controls {
-            background: #16213e;
-            color: white;
-            padding: 15px 20px;
-            text-align: center;
-        }
-        .controls p {
-            font-size: 0.85rem;
-            opacity: 0.7;
-        }
-        .legend-container {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            background: rgba(255,255,255,0.95);
-            padding: 15px;
-            border-radius: 8px;
-            font-size: 0.8rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 10;
-            width: 250px;
-        }
-        .legend-container h3 {
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        .legend-item {
-            display: flex;
-            align-items: center;
-            margin: 5px 0;
-        }
-        .legend-color {
-            width: 20px;
-            height: 20px;
-            border-radius: 3px;
-            margin-right: 8px;
-        }
-        .mobile-toggle-btn {
-            position: absolute;
-            top: 30px;
-            left: 30px;
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 6px;
-            cursor: pointer;
-            z-index: 10;
-            display: none;
-        }
-        .notes-section {
-            position: absolute;
-            top: 300px; /* Positioned below legend */
-            right: 30px;
-            background: rgba(255,255,255,0.95);
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            z-index: 10;
-            width: 300px;
-        }
-        .notes-section h3 {
-            margin-bottom: 10px;
-            font-size: 0.9rem;
-        }
-        .notes-section textarea {
-            width: 100%;
-            height: 80px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            margin-bottom: 10px;
-            resize: vertical;
-        }
-        .notes-section button {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            box-sizing: border-box;
-            font-size: 1rem;
-        }
-        .notes-section .notes-list {
-            margin-top: 15px;
-        }
-        @media (max-width: 768px) {
-            .legend-container, .notes-section {
-                position: static;
-                width: 100%;
-                margin: 20px 0;
-                display: none;
-            }
-            .mobile-toggle-btn {
-                display: block;
-            }
-            .legend-container.visible, .notes-section.visible {
-                display: block;
-                position: absolute;
-                top: 30px;
-                right: 30px;
-                left: 30px;
-            }
-            .viewer-container {
-                padding-top: 80px;
-            }
-        }
-
-        /* Fullscreen styles */
-        .fullscreen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            z-index: 1000 !important;
-            background: #1a1a2e;
-        }
-
-        .fullscreen .viewer-container {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            padding: 0 !important;
-            z-index: 1000 !important;
-        }
-
-        .fullscreen model-viewer {
-            width: 100% !important;
-            height: 100% !important;
-            max-width: none !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-        }
-
-        .fullscreen .legend-container,
-        .fullscreen .notes-section,
-        .fullscreen .fullscreen-btn,
-        .fullscreen .fullscreen-btn-legend {
-            position: fixed !important;
-            z-index: 1001 !important;
-        }
-
-        .fullscreen .legend-container {
-            top: 30px !important;
-            right: 30px !important;
-            left: auto !important;
-        }
-
-        .fullscreen .notes-section {
-            top: 300px !important;
-            right: 30px !important;
-            left: auto !important;
-            width: 300px !important;
-        }
-
-        .fullscreen .mobile-toggle-btn {
-            top: 30px !important;
-            left: 30px !important;
-        }
-
-        .fullscreen .fullscreen-btn-legend {
-            top: 10px !important;
-            right: 10px !important;
-        }
-
-        .fullscreen .controls {
-            position: fixed !important;
-            bottom: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            z-index: 1001 !important;
-            background: rgba(22, 33, 62, 0.9);
-        }
-
-        .fullscreen .controls p {
-            margin: 15px 20px;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
     <header>
@@ -275,7 +23,6 @@
             src="parcel-with-roof.glb"
             alt="3D модел на парцел с къща"
             camera-controls
-            auto-rotate
             shadow-intensity="1"
             exposure="0.8"
             camera-orbit="45deg 60deg 80m"
@@ -305,7 +52,9 @@
             <h3>Бележки</h3>
             <textarea id="noteInput" placeholder="Въведете бележка тук..." style="width: 100%; height: 80px; padding: 8px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px; resize: vertical;"></textarea>
             <button onclick="sendNote()">Изпрати бележка</button>
-            <div id="notesList" class="notes-list" style="margin-top: 15px;"></div>
+            <div class="notes-container" style="max-height: 250px; overflow-y: auto; overflow-x: hidden;">
+                <div id="notesList" class="notes-list" style="margin-top: 15px;"></div>
+            </div>
         </div>
     </div>
 
@@ -334,6 +83,10 @@
             }
         }
 
+        // Configuration for different environments
+        const isDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        const API_BASE_URL = isDev ? 'http://localhost:5082' : 'http://176.12.8.77:5082';
+
         // Function to send note to API
         async function sendNote() {
             const noteInput = document.getElementById('noteInput');
@@ -346,14 +99,13 @@
 
             try {
                 // Replace with your actual API endpoint
-                const response = await fetch('http://176.12.8.77:5082/notes', {
+                const response = await fetch(`${API_BASE_URL}/notes`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify({
-                        note: noteText,
-                        timestamp: new Date().toISOString()
+                        content: noteText
                     })
                 });
 
@@ -418,7 +170,7 @@
         async function loadNotes() {
             try {
                 // Replace with your actual API endpoint for getting notes
-                const response = await fetch('http://176.12.8.77:5082/notes', {
+                const response = await fetch(`${API_BASE_URL}/notes`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -443,7 +195,7 @@
             const notesList = document.getElementById('notesList');
 
             // Sort notes by timestamp in descending order (newest first)
-            notes.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            notes.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
             let notesHTML = '<h4>Последни бележки:</h4>';
 
@@ -451,15 +203,24 @@
                 // Show empty message when no notes exist
                 notesHTML += '<p style="color: #666;">Няма бележки</p>';
             } else {
-                // Show the most recent note
-                const latestNote = notes[0];
-                const date = new Date(latestNote.timestamp);
-                notesHTML += `
-                    <div style="background: #f0f0f0; padding: 10px; margin: 5px 0; border-radius: 4px; border-left: 4px solid #4CAF50;">
-                        <p>${latestNote.note}</p>
-                        <small style="opacity: 0.7;">${date.toLocaleString('bg-BG')}</small>
-                    </div>
-                `;
+                // Show up to 5 most recent notes
+                const maxNotesToShow = 5;
+                const notesToShow = notes.slice(0, maxNotesToShow);
+
+                notesToShow.forEach(note => {
+                    const date = new Date(note.created_at);
+                    notesHTML += `
+                        <div style="background: #f0f0f0; padding: 10px; margin: 5px 0; border-radius: 4px; border-left: 4px solid #4CAF50;">
+                            <p style="margin: 0 0 5px 0;">${note.content}</p>
+                            <small style="opacity: 0.7;">${date.toLocaleString('bg-BG')}</small>
+                        </div>
+                    `;
+                });
+
+                // If there are more notes than shown, add a message
+                if (notes.length > maxNotesToShow) {
+                    notesHTML += `<p style="text-align: center; color: #666; font-size: 0.8rem; margin: 10px 0 0 0;">... и още ${notes.length - maxNotesToShow} бележки</p>`;
+                }
             }
 
             notesList.innerHTML = notesHTML;
